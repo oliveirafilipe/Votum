@@ -19,82 +19,110 @@ Looking for a bot that provides quick on-the-fly poll-based votes to your entire
 ## Commands
 
 ### Admin commands
+
 These commands can only be run by someone with the `Manage Server` permission, or with a role named `Votum Admin`.
 
-| Command         | Description |
-| -------------   | ----------- |
-| `!Council [name]` | Create a council (or rename) in the channel you run this in, with an optional name.
-| `!Council remove` | Remove a council from the channel you run this in.
-| `!CouncilStats` | Displays some statistics about your council.
-| `!SetWeight [user/role] [weight]` | Sets the vote weight for users with a role or a user. See [Weighted Voting](#weighted-voting)
-| `!VoteWeights` | Display the current vote weights. See [Weighted Voting](#weighted-voting)
-| `!config [key] [value]` | Configures a setting in this council. See the table below.
-| `!config [key] $remove`  | Sets this setting back to its default.
+| Command                           | Description                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| `!Council [name]`                 | Create a council (or rename) in the channel you run this in, with an optional name.           |
+| `!Council remove`                 | Remove a council from the channel you run this in.                                            |
+| `!CouncilStats`                   | Displays some statistics about your council.                                                  |
+| `!SetWeight [user/role] [weight]` | Sets the vote weight for users with a role or a user. See [Weighted Voting](#weighted-voting) |
+| `!VoteWeights`                    | Display the current vote weights. See [Weighted Voting](#weighted-voting)                     |
+| `!config [key] [value]`           | Configures a setting in this council. See the table below.                                    |
+| `!config [key] $remove`           | Sets this setting back to its default.                                                        |
+
+  <h3 align="center"> Usage Example </h3>
+
+<p align="center">
+  <img src="images/!councilExample.png" text-align: center;>
+</p>
 
 ### Configuration Points
 
-| Key | Value type | Description | Default |
-| ------------- | ---------- | ----------- | ------- |
-| `councilor.role` | `role` | Define a role that councilors must have to vote. Otherwise, anyone that can see the channel can vote and will be counted for the majority count. | None
-| `propose.role` | `role` | Restricts proposing motions to users with this role only (in addition to the councilor role). | None
-| `dictator.role` | `role` | Any time a user with the dictator role votes, the motion will pass or fail immediately based on how they voted. | None
-| `user.cooldown` | `number` | Set the number of hours a councilor must wait between proposals. (Killed motions do not trigger the cooldown). | `0`
-| `user.cooldown.kill` | `boolean` | Whether or not killing motions should trigger the cooldown. | false
-| `motion.expiration` | `number` | Set the number of hours a motion can remain active. | `0`
-| `announce.channel` | `channel` | Designate a channel where all passed and failed (not killed) motions will be logged. | None
-| `on.passed.announce` | `channel` | A channel that announces *passed* motions only. | None
-| `on.killed.announce` | `channel` | A channel that announces *killed* motions only. | None
-| `on.failed.announce` | `channel` | A channel that announces *failed* motions only. | None
-| `councilor.motion.disable` | `boolean` | Whether or not creating new motions is disabled in this council (only accepts forwarded motions) | false
-| `motion.queue` | `boolean` | If enabled, motions can be created when another is active and will be queued, automatically starting when the current motion ends. | false
-| `majority.default` | `majority-type` | The default majority for motions. Fraction or percentage. | 1/2
-| `majority.minimum` | `majority-type` | The minimum majority councilors can create motions with. | 1/2
-| `majority.reached.ends` | `boolean` | Whether or not motions end as soon as majority is reached. Otherwise, all councilors will need to vote. | true
-| `on.finish.actions` | `json` | A set of actions that will take place when a motion resolves. See [Finish Actions](#finish-actions) | None
-| `vote.weights` | `json` | A map of User/Role IDs to the amount of votes that they are worth. Allows councilors to be worth different amounts of votes. See [Weighted Voting](#weighted-voting) | None
-| `reason.required.yes` | `boolean` | Whether or not the user must provide a reason with a positive vote. | true
-| `reason.required.no` | `boolean` | Whether or not the user must provide a reason with a negative vote. | true
-| `reason.required.abstain` | `boolean` | Whether or not the user must provide a reason with a neutral vote. | false
-| `create.deliberation.channels` | `boolean` | Whether or not to create deliberation channels for each motion. | false
-| `keep.transcripts` | `boolean` | Whether or not to keep transcripts of the deliberation channels before they are deleted. | false
+| Key                            | Value type      | Description                                                                                                                                                          | Default |
+| ------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `councilor.role`               | `role`          | Define a role that councilors must have to vote. Otherwise, anyone that can see the channel can vote and will be counted for the majority count.                     | None    |
+| `propose.role`                 | `role`          | Restricts proposing motions to users with this role only (in addition to the councilor role).                                                                        | None    |
+| `dictator.role`                | `role`          | Any time a user with the dictator role votes, the motion will pass or fail immediately based on how they voted.                                                      | None    |
+| `user.cooldown`                | `number`        | Set the number of hours a councilor must wait between proposals. (Killed motions do not trigger the cooldown).                                                       | `0`     |
+| `user.cooldown.kill`           | `boolean`       | Whether or not killing motions should trigger the cooldown.                                                                                                          | false   |
+| `motion.expiration`            | `number`        | Set the number of hours a motion can remain active.                                                                                                                  | `0`     |
+| `announce.channel`             | `channel`       | Designate a channel where all passed and failed (not killed) motions will be logged.                                                                                 | None    |
+| `on.passed.announce`           | `channel`       | A channel that announces _passed_ motions only.                                                                                                                      | None    |
+| `on.killed.announce`           | `channel`       | A channel that announces _killed_ motions only.                                                                                                                      | None    |
+| `on.failed.announce`           | `channel`       | A channel that announces _failed_ motions only.                                                                                                                      | None    |
+| `councilor.motion.disable`     | `boolean`       | Whether or not creating new motions is disabled in this council (only accepts forwarded motions)                                                                     | false   |
+| `motion.queue`                 | `boolean`       | If enabled, motions can be created when another is active and will be queued, automatically starting when the current motion ends.                                   | false   |
+| `majority.default`             | `majority-type` | The default majority for motions. Fraction or percentage.                                                                                                            | 1/2     |
+| `majority.minimum`             | `majority-type` | The minimum majority councilors can create motions with.                                                                                                             | 1/2     |
+| `majority.reached.ends`        | `boolean`       | Whether or not motions end as soon as majority is reached. Otherwise, all councilors will need to vote.                                                              | true    |
+| `on.finish.actions`            | `json`          | A set of actions that will take place when a motion resolves. See [Finish Actions](#finish-actions)                                                                  | None    |
+| `vote.weights`                 | `json`          | A map of User/Role IDs to the amount of votes that they are worth. Allows councilors to be worth different amounts of votes. See [Weighted Voting](#weighted-voting) | None    |
+| `reason.required.yes`          | `boolean`       | Whether or not the user must provide a reason with a positive vote.                                                                                                  | true    |
+| `reason.required.no`           | `boolean`       | Whether or not the user must provide a reason with a negative vote.                                                                                                  | true    |
+| `reason.required.abstain`      | `boolean`       | Whether or not the user must provide a reason with a neutral vote.                                                                                                   | false   |
+| `create.deliberation.channels` | `boolean`       | Whether or not to create deliberation channels for each motion.                                                                                                      | false   |
+| `keep.transcripts`             | `boolean`       | Whether or not to keep transcripts of the deliberation channels before they are deleted.                                                                             | false   |
 
 ### Councilor commands
 
-| Command         | Description |
-| -------------   | ----------- |
-| `!motion` | See the current motion.
-| `!motion <motion text>` | Call a motion with the given text.
-| `!motion [options] <motion text>` | Call a motion with [Motion options](#motion-options)
-| `!motion kill` | Kill the current motion. (Only admins or the motion author can do this).
-| `!yes | aye | si | yea | yay | ja | oui <reason>` | Vote yes with a mandatory reason.
-| `!no | nay | negative | nope | nein <reason>` | Vote no with a mandatory reason.
-| `!abstain [reason]` | Abstain from voting with an optional reason.
-| `!lazyvoters` | Mentions any council members who haven't voted on the current motion yet.
-| `!archive [range]` | Allows you to view past motions. Provide a range of numbers to view a summary, or provide a single number to view a motion.
-| `!archive export` | Exports your council's data as a JSON file.
+| Command                           | Description                                                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------- | ---- | -------------- | -------------------------------- | ------------- | --------------------------------- |
+| `!motion`                         | See the current motion.                                                                                                     |
+| `!motion <motion text>`           | Call a motion with the given text.                                                                                          |
+| `!motion [options] <motion text>` | Call a motion with [Motion options](#motion-options)                                                                        |
+| `!motion kill`                    | Kill the current motion. (Only admins or the motion author can do this).                                                    |
+| `!yes                             | aye                                                                                                                         | si       | yea  | yay            | ja                               | oui <reason>` | Vote yes with a mandatory reason. |
+| `!no                              | nay                                                                                                                         | negative | nope | nein <reason>` | Vote no with a mandatory reason. |
+| `!abstain [reason]`               | Abstain from voting with an optional reason.                                                                                |
+| `!lazyvoters`                     | Mentions any council members who haven't voted on the current motion yet.                                                   |
+| `!archive [range]`                | Allows you to view past motions. Provide a range of numbers to view a summary, or provide a single number to view a motion. |
+| `!archive export`                 | Exports your council's data as a JSON file.                                                                                 |
+
+<h2 align="center">Usage Examples</h2>
+
+Creating a motion
+
+<p align="center">
+<img src="images/!motionExample.png" text-align: center;>
+</p>
+
+Voting in a motion
+
+<p align="center">
+  <img src="images/!yesNoAbstainExample.png" text-align: center;>
+</p>
+
+Mentioning members who haven't voted
+
+<p align="center">
+  <img src="images/!lazyvotersExample.png" text-align: center;>
+</p>
 
 #### Motion Options
 
 Motion options are special flags you can put at the beginning of your motion to change options about the motion. Right now, the only options available are for changing the majority type.
 
-| Option flag | Aliases | Type | Description |
-| ----------- | ------- | ---- | ----------- |
-| `majority`  | `m`     | `majority type` | A percentage or fraction indicating the majority type.
-| `unanimous` | `u`     | `boolean` | Specifies the motion should be unanimous (shortcut for `-m 100%`)
+| Option flag | Aliases | Type            | Description                                                       |
+| ----------- | ------- | --------------- | ----------------------------------------------------------------- |
+| `majority`  | `m`     | `majority type` | A percentage or fraction indicating the majority type.            |
+| `unanimous` | `u`     | `boolean`       | Specifies the motion should be unanimous (shortcut for `-m 100%`) |
 
 ##### Example
 
 To start a motion with 2/3rd majority, you could use the commands (all are equivalent):<br>
+
 - `!motion -m 2/3 Motion text goes here`
 - `!motion --majority 2/3 Motion text goes here`
 - `!motion --majority 66% Motion text goes here`
 
 Unanimous motion (all are equivalent):<br>
+
 - `!motion -u Motion text goes here`
 - `!motion --unanimous Motion text goes here`
 - `!motion -m 100% Motion text goes here`
 - `!motion -m 1/1 Motion text goes here`
-
 
 ## Voting
 
@@ -116,12 +144,12 @@ Unanimous motion (all are equivalent):<br>
 
 With the `on.finish.actions` configuration point, you can supply custom JSON configuration that tells Votum what to do with your motion once it resolves. Most prominently, you can forward your motion into other councils (based on the majority type) with potentially different options. Use [this link](https://json-editor.github.io/json-editor/?data=N4Ig9gDgLglmB2BnEAuUMDGCA2MBGqIAZglAIYDuApomALZUCsIANOHgFZUZQD62ZAJ5gArlELwwAJzplsrEIgwALKrNSgAJlSIx4MWAmRoQZHnHgaQUQRCqEyUqUIWwo2eyhABBcwgUGasagNnaEYJzc4mxuHoS+hpZsUlQAjiIwKZqoANqmfknWYCAAumxkmpoGFnIAClKQVFKwNKhEcohUbBANds0wrSZkUACyZBzSBoJWoZ4g8CJ0eE2uBnFe3lAABFDKMIhbshNSU15s2u0i2OIoAAxsdHowdIuo9yCyAB7PrygAjGwqJ8yHQIB5jDlbgA6RglAC+5QKM1sc0QUBO8AA5qt3HMEhYFBcyFcbiAFECQWDBnkSFIKI5smUQFQFnRcsRpPSpIyEUVkWEvGiMdiYms5gBhUTwDAwbBbACSABFCTpiddCOTgaDwezbnqAEwAZiNtyNJuNhr1pW6wygTUsXgAegAKSEAWgAnCUANQASgAJCBeZBEsFrCjCEK9CLrGLCAB5aAWA5RrEqpQnJP+LyJ0NbVOYrYUPYqLZgABuTRO2gOuyoWyB+1gWMOYESZazSE1lJ1KDybrdR0mNi2+oA9IbSnDp9O2P6lKp1F5lFAoBAUGOxxxaPA3Qu1GQodJMWPNM4iFA3bcAOxj/eyADErgjXgiXB4OPWIAAam3FlsRjbCwtnxIwFAqKpEjqXomhaYx2mwTpyngQR4yIXJQBSdJMiobI+xACAyEQToeRYTC0gyLJ2XaWVcKnMiQCwyi6PwgBrWUPB5JkekafpBlAQjiJY0B/RSdCvAfU8dCeUMxzMRJPzmWoiJIoM2BozirFEnRCEki4ZOTOSkVFXFCAAMTIWjsl5djsE0kxtPEkA9Ok/RZPkgkTK/ABpDi6JnNhEGUMAKF4KtpGMEA9DtZxjOsRc5jwMA2yFMgIAAFiDOEgA==) to be taken to a form where you can generate a valid JSON configuration for this option. The actions have these fields:
 
-| field | type | description |
-| ----- | ---- | ----------- |
-| action | string enum (forward) | The action. Only `forward` is supported.
-| to    | snowflake | The discord ID of the channel of the new council
-| atMajority? | number | A number between 0-1 that will filter this action from triggering unless the motion resolved with this given majority (optional)
-| options? | string | [Motion options](#motion-options)
+| field       | type                  | description                                                                                                                      |
+| ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| action      | string enum (forward) | The action. Only `forward` is supported.                                                                                         |
+| to          | snowflake             | The discord ID of the channel of the new council                                                                                 |
+| atMajority? | number                | A number between 0-1 that will filter this action from triggering unless the motion resolved with this given majority (optional) |
+| options?    | string                | [Motion options](#motion-options)                                                                                                |
 
 ## Weighted Voting
 
