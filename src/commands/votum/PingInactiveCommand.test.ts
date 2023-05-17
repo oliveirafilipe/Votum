@@ -1,9 +1,5 @@
 import { CommandoClient, CommandoMessage } from "discord.js-commando"
 import PingInactiveCommand from "./PingInactiveCommand"
-//@ts-ignore
-import Votum from "../../Votum"
-//@ts-ignore
-import Motion from "../../Motion"
 import { Collection, Guild, GuildMember, Message, SnowflakeUtil, User } from "discord.js"
 
 const mockVotumInitialize = jest.fn()
@@ -34,7 +30,7 @@ jest.mock("../../Votum", () => ({
 }))
 
 describe("PingInactiveCommand tests", () => {
-  var commandClient: CommandoClient,
+  let commandClient: CommandoClient,
     pingInactiveCommand: PingInactiveCommand,
     user: User,
     guild: Guild,

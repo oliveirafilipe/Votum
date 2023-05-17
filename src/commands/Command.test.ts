@@ -1,9 +1,7 @@
 import { CommandoClient, CommandoMessage } from "discord.js-commando"
-import Command from './Command'
-//@ts-ignore
-import Votum from "../Votum"
 import { Guild, GuildMember, Permissions, User, SnowflakeUtil, Message } from "discord.js"
 import { CouncilData } from "../CouncilData"
+import Command from './Command'
 
 const mockVotumInitialize = jest.fn()
 const mockVotumGetCouncil = jest
