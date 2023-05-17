@@ -2,10 +2,8 @@ import { CommandoClient, CommandoMessage } from "discord.js-commando"
 import Command from './Command'
 //@ts-ignore
 import Votum from "../Votum"
-import { Guild, GuildMember, Permissions, User } from "discord.js"
-import { SnowflakeUtil } from "discord.js"
+import { Guild, GuildMember, Permissions, User, SnowflakeUtil, Message } from "discord.js"
 import { CouncilData } from "../CouncilData"
-import { Message } from "discord.js"
 
 const mockVotumInitialize = jest.fn()
 const mockVotumGetCouncil = jest
@@ -20,23 +18,23 @@ const mockVotumGetCouncil = jest
 jest.mock("../Votum", () => ({ getCouncil: () => mockVotumGetCouncil() }))
 
 describe("Command tests", () => {
-  var userId: string, user: User, commandClient: CommandoClient;
+  let userId: string, user: User, commandClient: CommandoClient, mockCommandoInfo: any
   beforeEach(() => {
     userId = SnowflakeUtil.generate()
     user = new User(new CommandoClient({ restSweepInterval: 0 }), {
       id: userId,
     })
     commandClient = new CommandoClient({ restSweepInterval: 0, owner: 'anotherOwner' })
-  })
-
-  test("Should create Command instance", () => {
-    const mockCommandoInfo = {
+    mockCommandoInfo = {
       description: "command",
       name: "test",
       councilOnly: false,
       adminOnly: true,
       adminsAlwaysAllowed: false,
     }
+  })
+
+  test("Should create Command instance", () => {
     const command = new Command(
       new CommandoClient({ restSweepInterval: 0 }),
       mockCommandoInfo
@@ -50,13 +48,7 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if author user is owner", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: false,
-      adminsAlwaysAllowed: false,
-    }
+    mockCommandoInfo.adminOnly = false
 
     const command = new Command(
       new CommandoClient({ restSweepInterval: 0, owner: userId }),
@@ -75,14 +67,6 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if author has permission to manage guild and command is admin only", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: true,
-      adminsAlwaysAllowed: false,
-    }
-
     const command = new Command(
       commandClient,
       mockCommandoInfo
@@ -128,14 +112,6 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if author has admin role and command is admin only", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: true,
-      adminsAlwaysAllowed: false,
-    }
-
     const command = new Command(
       commandClient,
       mockCommandoInfo
@@ -182,14 +158,6 @@ describe("Command tests", () => {
   })
 
   test("Should not have permission if author is not admin and command is admin only", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: true,
-      adminsAlwaysAllowed: false,
-    }
-
     const command = new Command(
       commandClient,
       mockCommandoInfo
@@ -229,13 +197,8 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if author is admin and admins are always allowed", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: false,
-      adminsAlwaysAllowed: true,
-    }
+    mockCommandoInfo.adminOnly = false
+    mockCommandoInfo.adminsAlwaysAllowed = true
 
     const command = new Command(
       commandClient,
@@ -283,12 +246,9 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if author has role that is allowed in council", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
+    mockCommandoInfo = {
+      ...mockCommandoInfo,
       adminOnly: false,
-      adminsAlwaysAllowed: false,
       allowWithConfigurableRoles: ['proposeRole'] as Array<keyof CouncilData>
     }
 
@@ -337,13 +297,7 @@ describe("Command tests", () => {
   })
 
   test("Should have permission if council and author have councilor role", () => {
-    const mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: false,
-      adminsAlwaysAllowed: false,
-    }
+    mockCommandoInfo.adminOnly = false
 
     const command = new Command(
       commandClient,
@@ -390,14 +344,6 @@ describe("Command tests", () => {
   })
 
   test("Should run command", async () => {
-    var mockCommandoInfo = {
-      description: "command",
-      name: "test",
-      councilOnly: false,
-      adminOnly: true,
-      adminsAlwaysAllowed: false,
-    }
-
     const command = new Command(
       commandClient,
       mockCommandoInfo
