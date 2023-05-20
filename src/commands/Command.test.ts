@@ -53,13 +53,7 @@ describe("Command tests", () => {
       mockCommandoInfo
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user
-      } as unknown as CommandoMessage
-    )
+    const hasPermission = command.hasPermission(buildCommandMessage(user, undefined))
 
     expect(hasPermission).toBe(true)
   })
@@ -69,9 +63,10 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
           permissions: [Permissions.ALL]
@@ -81,13 +76,8 @@ describe("Command tests", () => {
           permissions: []
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-          roles: ['foo-role']
-        },
-      ],
-    })
+      ['foo-role']
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -97,15 +87,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(true)
   })
 
@@ -114,9 +96,10 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
           permissions: []
@@ -127,13 +110,8 @@ describe("Command tests", () => {
           permissions: []
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-          roles: ['foo-role']
-        },
-      ],
-    })
+      ['foo-role']
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -143,15 +121,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(true)
   })
 
@@ -160,20 +130,17 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
-          permissions: [],
+          permissions: []
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-        },
-      ],
-    })
+      []
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -182,15 +149,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(false)
   })
 
@@ -202,9 +161,10 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
           permissions: []
@@ -215,13 +175,8 @@ describe("Command tests", () => {
           permissions: []
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-          roles: ['foo-role']
-        },
-      ],
-    })
+      ['foo-role']
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -231,15 +186,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(true)
   })
 
@@ -254,25 +201,21 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
-          permissions: [],
+          permissions: []
         },
         {
           id: 'proposeRole',
           permissions: [],
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-          roles: ['proposeRole']
-        },
-      ],
-    })
+      ['proposeRole']
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -282,15 +225,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(true)
   })
 
@@ -301,25 +236,21 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
-          permissions: [],
+          permissions: []
         },
         {
           id: 'councilorRole',
           permissions: [],
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-          roles: ['councilorRole']
-        },
-      ],
-    })
+      ['councilorRole']
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -329,15 +260,7 @@ describe("Command tests", () => {
       guild
     )
 
-    const hasPermission = command.hasPermission(
-      {
-        channel: { id: 10 },
-        reply: (msg: string) => {},
-        author: user,
-        member: member,
-      } as unknown as CommandoMessage
-    )
-
+    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
     expect(hasPermission).toBe(true)
   })
 
@@ -346,20 +269,17 @@ describe("Command tests", () => {
       commandClient,
       mockCommandoInfo
     )
-    const guild = new Guild(commandClient, {
-      id: 123,
-      roles: [
+    const guild = buildGuild(
+      commandClient,
+      user,
+      [
         {
           id: 123,
-          permissions: [],
+          permissions: []
         }
       ],
-      members: [
-        {
-          user: { id: user.id, username: user.username },
-        },
-      ],
-    })
+      []
+    )
     const member = new GuildMember(
       commandClient,
       {
@@ -367,15 +287,30 @@ describe("Command tests", () => {
       },
       guild
     )
-    const commandMessage = {
-      channel: { id: 10 },
-      reply: (msg: string) => { return { content: msg } as Message },
-      author: user,
-      member: member,
-    } as unknown as CommandoMessage
 
-    const replyMessage = await command.run(commandMessage, {})
-
+    const replyMessage = await command.run(buildCommandMessage(user, member), {})
     expect(replyMessage).toStrictEqual( { content: "This command has no implementation." })
   })
 })
+
+function buildGuild(commandClient: CommandoClient, user: User, guildRoles: any, memberRoles: any) : Guild {
+  return new Guild(commandClient, {
+    id: 123,
+    roles: guildRoles,
+    members: [
+      {
+        user: { id: user.id, username: user.username },
+        roles: memberRoles
+      },
+    ],
+  })
+}
+
+function buildCommandMessage(user: User, member: GuildMember|undefined) : CommandoMessage {
+  return {
+    channel: { id: 10 },
+    reply: (msg: string) => { return { content: msg } as Message },
+    author: user,
+    member: member,
+  } as unknown as CommandoMessage
+}
