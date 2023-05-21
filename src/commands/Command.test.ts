@@ -16,7 +16,15 @@ const mockVotumGetCouncil = jest
 jest.mock("../Votum", () => ({ getCouncil: () => mockVotumGetCouncil() }))
 
 describe("Command tests", () => {
-  let userId: string, user: User, commandClient: CommandoClient, mockCommandoInfo: any
+  let userId: string, 
+    user: User,
+    commandClient: CommandoClient,
+    mockCommandoInfo: any,
+    command: Command,
+    guild: Guild,
+    member: GuildMember,
+    commandMessage: CommandoMessage
+
   beforeEach(() => {
     userId = SnowflakeUtil.generate()
     user = new User(new CommandoClient({ restSweepInterval: 0 }), {
@@ -47,25 +55,18 @@ describe("Command tests", () => {
 
   test("Should have permission if author user is owner", () => {
     mockCommandoInfo.adminOnly = false
-
     const command = new Command(
       new CommandoClient({ restSweepInterval: 0, owner: userId }),
       mockCommandoInfo
     )
+    configureCommandMessage()
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, undefined))
-
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
   test("Should have permission if author has permission to manage guild and command is admin only", () => {
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -78,27 +79,13 @@ describe("Command tests", () => {
       ],
       ['foo-role']
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-        roles: ['foo-role']
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
   test("Should have permission if author has admin role and command is admin only", () => {
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -112,27 +99,13 @@ describe("Command tests", () => {
       ],
       ['foo-role']
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-        roles: ['foo-role']
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
   test("Should not have permission if author is not admin and command is admin only", () => {
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -141,29 +114,15 @@ describe("Command tests", () => {
       ],
       []
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(false)
   })
 
   test("Should have permission if author is admin and admins are always allowed", () => {
     mockCommandoInfo.adminOnly = false
     mockCommandoInfo.adminsAlwaysAllowed = true
-
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -177,16 +136,8 @@ describe("Command tests", () => {
       ],
       ['foo-role']
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-        roles: ['foo-role']
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
@@ -196,14 +147,7 @@ describe("Command tests", () => {
       adminOnly: false,
       allowWithConfigurableRoles: ['proposeRole'] as Array<keyof CouncilData>
     }
-
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -216,29 +160,14 @@ describe("Command tests", () => {
       ],
       ['proposeRole']
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-        roles: ['proposeRole']
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
   test("Should have permission if council and author have councilor role", () => {
     mockCommandoInfo.adminOnly = false
-
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -251,27 +180,13 @@ describe("Command tests", () => {
       ],
       ['councilorRole']
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-        roles: ['councilorRole']
-      },
-      guild
-    )
 
-    const hasPermission = command.hasPermission(buildCommandMessage(user, member))
+    const hasPermission = command.hasPermission(commandMessage)
     expect(hasPermission).toBe(true)
   })
 
   test("Should run command", async () => {
-    const command = new Command(
-      commandClient,
-      mockCommandoInfo
-    )
-    const guild = buildGuild(
-      commandClient,
-      user,
+    configureCommandDependencies(
       [
         {
           id: 123,
@@ -280,37 +195,41 @@ describe("Command tests", () => {
       ],
       []
     )
-    const member = new GuildMember(
-      commandClient,
-      {
-        user: { id: user.id, username: user.username },
-      },
-      guild
-    )
 
-    const replyMessage = await command.run(buildCommandMessage(user, member), {})
+    const replyMessage = await command.run(commandMessage, {})
     expect(replyMessage).toStrictEqual( { content: "This command has no implementation." })
   })
+
+  function configureCommandDependencies(guildRoles: any, memberRoles: any) : void {
+    let memberInfo = {
+      user: { id: user.id, username: user.username },
+      roles: memberRoles
+    }
+    command = new Command(
+      commandClient,
+      mockCommandoInfo
+    )
+    guild = new Guild(commandClient, {
+      id: 123,
+      roles: guildRoles,
+      members: [
+        memberInfo,
+      ],
+    })
+    member = new GuildMember(
+      commandClient,
+      memberInfo,
+      guild
+    )
+    configureCommandMessage()
+  }
+
+  function configureCommandMessage() : void {
+    commandMessage = {
+      channel: { id: 10 },
+      reply: (msg: string) => { return { content: msg } as Message },
+      author: user,
+      member: member,
+    } as unknown as CommandoMessage
+  }
 })
-
-function buildGuild(commandClient: CommandoClient, user: User, guildRoles: any, memberRoles: any) : Guild {
-  return new Guild(commandClient, {
-    id: 123,
-    roles: guildRoles,
-    members: [
-      {
-        user: { id: user.id, username: user.username },
-        roles: memberRoles
-      },
-    ],
-  })
-}
-
-function buildCommandMessage(user: User, member: GuildMember|undefined) : CommandoMessage {
-  return {
-    channel: { id: 10 },
-    reply: (msg: string) => { return { content: msg } as Message },
-    author: user,
-    member: member,
-  } as unknown as CommandoMessage
-}
