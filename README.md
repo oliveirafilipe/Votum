@@ -31,7 +31,7 @@ These commands can only be run by someone with the `Manage Server` permission, o
 | `!config [key] [value]` | Configures a setting in this council. See the table below.
 | `!config [key] $remove`  | Sets this setting back to its default.
 
-<h3 align="center"> Usage Example </h3>
+<h3> Usage Example </h3>
 
 <p align="center">
   <img src="images/!councilExample.png">
@@ -79,21 +79,21 @@ These commands can only be run by someone with the `Manage Server` permission, o
 | `!archive [range]` | Allows you to view past motions. Provide a range of numbers to view a summary, or provide a single number to view a motion.
 | `!archive export` | Exports your council's data as a JSON file.
 
-<h2 align="center">Usage Examples</h2>
+<h3>Usage Examples</h3>
 
-Creating a motion
+Creating a motion:
 
 <p align="center">
 <img src="images/!motionExample.png">
 </p>
 
-Voting in a motion
+Voting in a motion:
 
 <p align="center">
   <img src="images/!yesNoAbstainExample.png">
 </p>
 
-Mentioning members who haven't voted
+Mentioning members who haven't voted:
 
 <p align="center">
   <img src="images/!lazyvotersExample.png">
