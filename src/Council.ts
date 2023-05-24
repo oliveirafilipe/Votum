@@ -1,8 +1,8 @@
 import { Collection, GuildMember, Snowflake, TextChannel } from "discord.js"
-import * as fs from "fs"
-import onChange from "on-change"
-import * as path from "path"
-import { CouncilData, DefaultCouncilData } from "./CouncilData"
+// import * as fs from "fs"
+//import onChange from "on-change"
+// import * as path from "path"
+import { CouncilData } from "./CouncilData"
 import Motion from "./Motion"
 import { MotionData } from "./MotionData"
 import { response, ResponseType } from "./Util"
@@ -15,19 +15,19 @@ export interface CouncilWeights {
 }
 
 export default class Council {
-  private static defaultData = DefaultCouncilData
+  // private static defaultData = DefaultCouncilData
 
   public id: Snowflake
   public channel: TextChannel
   private data: CouncilData
-  private dataPath: string
+  // private dataPath: string
   private initPromise: Promise<unknown>
 
   constructor(channel: TextChannel) {
     this.channel = channel
     this.id = channel.id
 
-    this.dataPath = path.join(__dirname, `../data/${this.id}.json`)
+    // this.dataPath = path.join(__dirname, `../data/${this.id}.json`)
     this.loadData()
 
     if (this.enabled) {
@@ -235,55 +235,57 @@ export default class Council {
   }
 
   private loadData(attempt = 0): void {
-    let data: CouncilData
+    // let data: CouncilData
 
-    if (fs.existsSync(this.dataPath)) {
-      try {
-        const parsedSettings = JSON.parse(
-          fs.readFileSync(this.dataPath, {
-            encoding: "utf8",
-          })
-        )
-        data = Object.assign(
-          {},
-          JSON.parse(JSON.stringify(Council.defaultData)),
-          parsedSettings
-        )
-      } catch (e) {
-        if (attempt > 10) {
-          console.error(`Council ${this.id} data couldn't be loaded`, e)
-          throw new Error(
-            "Council data could not be loaded, perhaps it's corrupted."
-          )
-        }
+    // if (fs.existsSync(this.dataPath)) {
+    //   try {
+    //     const parsedSettings = JSON.parse(
+    //       fs.readFileSync(this.dataPath, {
+    //         encoding: "utf8",
+    //       })
+    //     )
+    //     data = Object.assign(
+    //       {},
+    //       JSON.parse(JSON.stringify(Council.defaultData)),
+    //       parsedSettings
+    //     )
+    //   } catch (e) {
+    //     if (attempt > 10) {
+    //       console.error(`Council ${this.id} data couldn't be loaded`, e)
+    //       throw new Error(
+    //         "Council data could not be loaded, perhaps it's corrupted."
+    //       )
+    //     }
 
-        return this.loadData(attempt + 1)
-      }
-    } else {
-      data = JSON.parse(JSON.stringify(Council.defaultData))
-    }
+    //     return this.loadData(attempt + 1)
+    //   }
+    // } else {
+    //   data = JSON.parse(JSON.stringify(Council.defaultData))
+    // }
 
-    this.data = onChange(data, () => {
-      setTimeout(() => {
-        try {
-          if (fs.existsSync(this.dataPath)) {
-            fs.copyFileSync(this.dataPath, this.dataPath + ".bak")
-          }
-        } catch (e) {}
+    
 
-        for (let i = 0; i < 10; i++) {
-          try {
-            fs.writeFileSync(
-              this.dataPath,
-              JSON.stringify(this.data, undefined, 2)
-            )
+    // this.data = onChange(data, () => {
+    //   setTimeout(() => {
+    //     try {
+    //       if (fs.existsSync(this.dataPath)) {
+    //         fs.copyFileSync(this.dataPath, this.dataPath + ".bak")
+    //       }
+    //     } catch (e) {}
 
-            break
-          } catch (e) {
-            console.error("Could not save council data", e)
-          }
-        }
-      }, 1)
-    }) as CouncilData
+    //     for (let i = 0; i < 10; i++) {
+    //       try {
+    //         fs.writeFileSync(
+    //           this.dataPath,
+    //           JSON.stringify(this.data, undefined, 2)
+    //         )
+
+    //         break
+    //       } catch (e) {
+    //         console.error("Could not save council data", e)
+    //       }
+    //     }
+    //   }, 1)
+    // }) as CouncilData
   }
 }
