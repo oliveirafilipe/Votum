@@ -11,6 +11,8 @@ import Votum from "./Votum"
 
 export type ExtractRight<T> = T extends Either<infer L, infer R> ? R : never
 
+export const MAX_MESSAGE_SIZE = 2000
+
 export function withDefault<T extends t.Any>(
   type: T,
   defaultValue: t.TypeOf<T>
